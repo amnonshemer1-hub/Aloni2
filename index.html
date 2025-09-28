@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <title>זהבי משחק</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+    h1 {
+      font-size: 40px;
+      color: gold;
+      background-color: blue;
+      padding: 15px;
+      animation: blink 4s infinite;
+    }
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .info {
+      font-size: 20px;
+      font-weight: bold;
+      color: red;
+      margin: 15px 0;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 25px;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    .authorized {
+      margin-top: 20px;
+    }
+    .authorized input {
+      padding: 5px;
+      font-size: 16px;
+    }
+    .authorized button {
+      padding: 6px 12px;
+      margin-left: 5px;
+      font-size: 16px;
+      background-color: gold;
+      color: blue;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>זהבי משחק - הוכן על ידי אלון שמר וינאי פנקס</h1>
+  <p class="info">הכניסה אפשרית רק בין השעות 9:00 עד 20:00</p>
+
+  <button id="normalLogin">כניסה</button>
+
+  <div class="authorized">
+    <input type="password" id="secretCode" placeholder="הכנס קוד סודי">
+    <button id="authLogin">כניסה למורשה בלבד</button>
+  </div>
+
+  <script>
+    document.getElementById("normalLogin").onclick = function() {
+      const hour = new Date().getHours();
+      if(hour >= 9 && hour < 20){
+        window.location.href = "Aloni8.html";
+      } else {
+        alert("הכניסה הרגילה אפשרית רק בין 9:00 ל-20:00");
+      }
+    };
+
+    document.getElementById("authLogin").onclick = function() {
+      const code = document.getElementById("secretCode").value;
+      if(code === "183000"){
+        window.location.href = "Aloni8.html";
+      } else {
+        alert("קוד סודי לא נכון");
+      }
+    };
+  </script>
+</body>
+</html>
