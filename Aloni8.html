@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+<meta charset="UTF-8">
+<title>זהבי משחק</title>
+<style>
+body { font-family: Arial,sans-serif; background:#87CEEB; margin:0; padding:0; text-align:center; }
+
+/* הכיתוב העליון שמופיע בכל דף */
+header {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    background: blue;        /* רקע כחול */
+    color: gold;             /* טקסט זהב */
+    font-size:32px;          /* גופן גדול */
+    font-weight:bold;
+    text-transform: uppercase;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    animation: blink 1s infinite; /* הבהוב כל 1 שניות */
+}
+
+@keyframes blink {
+  0%, 50%, 100% { color: gold; }
+  25%, 75% { color: #FFD600; } /* זהב בהיר יותר */
+}
+
+/* דוחף את שאר התוכן מתחת ל-header */
+body > *:not(header) { 
+    margin-top: 50px; 
+}
+
+/* מסך כניסה */
+#loginScreen { position: fixed; top:80px; left:0; width:100%; height:calc(100% - 80px); background: rgba(255,200,100,0.95); display:flex; justify-content:center; align-items:center; flex-direction:column; }
+#loginScreen button { margin-top:10px; padding:10px 20px; border:none; border-radius:8px; background:blue; color:white; cursor:pointer; font-size:16px; }
+#specialUserInput { display:none; margin-top:5px; }
+#errorMsg { color:red; margin-top:10px; display:none; }
+#timeMsg { color:red; margin-top:10px; display:none; font-weight:bold; }
+
+/* מסך קוביות משחקים */
+#homeScreen { display:none; margin:20px; }
+#gameCardsContainer { display: flex; flex-wrap: wrap; justify-content: center; }
+.gameCard { 
+    width:120px; 
+    height:120px; 
+    margin:15px; 
+    background:green;      
+    border:2px solid #333; 
+    border-radius:10px; 
+    font-size:25px;       
+    font-weight:bold;       
+    color:darkblue;         
+    line-height:1.2;       /* ריווח שורות מותאם */
+    text-decoration:none; 
+    transition: all 0.3s ease; 
+    display:flex; 
+    justify-content:center; 
+    align-items:center; 
+    text-align:center;
+}
+.gameCard:hover { 
+    background:darkgreen; 
+    color:yellow;           
+    cursor:pointer; 
+}
+
+/* כפתור יציאה בתחתית המסך */
+#exitBtn {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: yellow;
+    color: blue;
+    font-weight: bold;
+    padding: 20px 40px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.2s ease; /* אנימציה חלקה */
+}
+#exitBtn:hover {
+    background: gold;
+    transform: translateX(-50%) scale(1.1); /* הגדלה קלה בעת ריחוף */
+}
+</style>
+</head>
+<body>
+
+<header>
+  זהבי משחק - הוכן על ידי אלון שמר וינאי פנקס
+</header>
+
+<div id="loginScreen">
+  <h2>כניסה למסך המשחקים</h2>
+  <button id="normalLoginBtn" onclick="enterHome()"> כניסה בשעות 9:00 עד 20:00 בלבד</button>
+  <button id="specialLoginBtn" onclick="showSpecialLogin()">כניסה מעבר לשעות המותרות עם קוד מיוחד</button>
+  <input type="password" id="specialUserInput" placeholder="קוד סודי">
+  <button id="specialLoginBtn2" style="display:none;" onclick="checkSpecialUser()">אישור</button>
+  <div id="errorMsg"></div>
+  <div id="timeMsg">הכניסה אפשרית רק בין השעות 9:00 עד 20:00</div>
+</div>
+
+<div id="homeScreen">
+  <h2>ברוכים הבאים למסך המשחקים!</h2>
+  <div id="gameCardsContainer">
+    <a class="gameCard" href="https://poki.com/il/g/cube-builder" target="_blank">מיינקראפט קוביות</a>
+    <a class="gameCard" href="https://www.msn.com/he-il/play/games/bloxdio/cg-9p0rj8ffrg7h?cgfrom=cg_ntp_sd_cardgameitem&ocid=msedgdhp" target="_blank">מיינקראפט הרפתקאות</a>
+    <div class="gameCard">משחק 3</div>
+    <div class="gameCard">משחק 4</div>
+    <div class="gameCard">משחק 5</div>
+    <div class="gameCard">משחק 6</div>
+    <div class="gameCard">משחק 7</div>
+    <div class="gameCard">משחק 8</div>
+    <div class="gameCard">משחק 9</div>
+    <div class="gameCard">משחק 10</div>
+    <div class="gameCard">משחק 11</div>
+    <div class="gameCard">משחק 12</div>
+  </div>
+</div>
+
+<button id="exitBtn" onclick="exitToLogin()">יציאה למסך הראשי</button>
+
+<script>
+const loginScreen = document.getElementById("loginScreen");
+const normalLoginBtn = document.getElementById("normalLoginBtn");
+const specialUserInput = document.getElementById("specialUserInput");
+const errorMsg = document.getElementById("errorMsg");
+const homeScreen = document.getElementById("homeScreen");
+const timeMsg = document.getElementById("timeMsg");
+
+// בדיקה אם השעה מחוץ לשעות 09:00–20:00
+const now = new Date();
+const hour = now.getHours();
+if(hour < 9 || hour >= 20){
+    normalLoginBtn.style.display = "none";
+    timeMsg.style.display = "block";
+} else {
+    specialUserInput.style.display = "none";
+    document.getElementById("specialLoginBtn2").style.display = "none";
+}
+
+// פונקציות כניסה
+function enterHome(){
+  loginScreen.style.display = "none";
+  homeScreen.style.display = "block";
+}
+
+function showSpecialLogin(){
+  specialUserInput.style.display = "block";
+  document.getElementById("specialLoginBtn2").style.display = "inline-block";
+}
+
+function checkSpecialUser(){
+  const secretCode = "183000"; // סודי
+  if(specialUserInput.value === secretCode){ 
+    enterHome();
+  } else { 
+    errorMsg.style.display = "block"; 
+    errorMsg.innerText = "קוד סודי שגוי"; 
+  }
+}
+
+// פונקציה ליציאה למסך הכניסה
+function exitToLogin(){
+    homeScreen.style.display = "none";
+    loginScreen.style.display = "flex";
+}
+
+// לוגיקה לקוביות ללא משחק עם אנימציה חלקה
+document.querySelectorAll('.gameCard').forEach(card => {
+  if(!card.href){ 
+    card.dataset.originalText = card.innerText;
+    card.dataset.alertShown = "false";
+    card.addEventListener('click', function() {
+      if(card.dataset.alertShown === "false") {
+        card.style.background = "red";
+        card.style.color = "darkblue";
+        card.innerText = "עדיין אין משחק. לחץ לחזרה";
+        card.dataset.alertShown = "true";
+      } else {
+        card.style.background = "green";
+        card.style.color = "darkblue";
+        card.innerText = card.dataset.originalText;
+        card.dataset.alertShown = "false";
+      }
+    });
+  }
+});
+</script>
+
+</body>
+</html>
